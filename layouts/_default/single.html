@@ -1,0 +1,49 @@
+{{ define "main" }}
+<article class="tool-page">
+    <header class="tool-header">
+        <nav class="breadcrumb">
+            <a href="/">Home</a> > 
+            <a href="/categories/">Categories</a> > 
+            {{ if .Params.category }}
+            <a href="/categories/{{ .Params.category | urlize }}/">{{ .Params.category }}</a> > 
+            {{ end }}
+            <span>{{ .Title }}</span>
+        </nav>
+        
+        <div class="tool-meta">
+            {{ if .Params.category }}
+            <span class="category-tag">{{ .Params.category }}</span>
+            {{ end }}
+            {{ if .Params.subcategory }}
+            <span class="subcategory-tag">{{ .Params.subcategory }}</span>
+            {{ end }}
+        </div>
+        
+        <h1>{{ .Title }}</h1>
+        
+        {{ if .Params.tagline }}
+        <p class="tool-tagline">{{ .Params.tagline }}</p>
+        {{ end }}
+    </header>
+    
+    <div class="tool-content">
+        {{ .Content }}
+    </div>
+    
+    <!-- Simple Related Tools -->
+    <aside class="related-tools">
+        <h3>Related Tools</h3>
+        <div class="grid grid-3">
+            {{ $currentCategory := .Params.category }}
+            {{ range first 3 (where .Site.RegularPages "Params.category" $currentCategory) }}
+            {{ if ne .Title $.Title }}
+            <div class="card tool-card">
+                <h4><a href="{{ .RelPermalink }}">{{ .Title }}</a></h4>
+                <p class="tool-tagline">{{ .Params.tagline | truncate 80 }}</p>
+            </div>
+            {{ end }}
+            {{ end }}
+        </div>
+    </aside>
+</article>
+{{ end }}

@@ -1,0 +1,44 @@
+{{ define "main" }}
+<div class="home-hero">
+    <div class="hero-content">
+        <h1>{{ .Site.Title }}</h1>
+        <p class="hero-tagline">{{ .Site.Params.description }}</p>
+        <div class="hero-actions">
+            <a href="/categories/" class="btn btn-primary">Browse All Categories</a>
+        </div>
+    </div>
+</div>
+
+<section class="featured-tools">
+    <h2>Featured Tools</h2>
+    <div class="grid grid-4">
+        {{ range first 12 .Site.RegularPages }}
+        <div class="card tool-card">
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <p class="tool-tagline">{{ .Params.tagline }}</p>
+            <div class="tool-meta">
+                <span class="category-tag">{{ .Params.category }}</span>
+                {{ if .Params.subcategory }}
+                <span class="subcategory-tag">{{ .Params.subcategory }}</span>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</section>
+
+<section class="categories-preview">
+    <div class="section-header">
+        <h2>Browse by Category</h2>
+        <a href="/categories/" class="view-all-link">View All Categories →</a>
+    </div>
+    <div class="grid grid-3">
+        {{ range first 6 .Site.Taxonomies.categories }}
+        <div class="card category-card">
+            <h3><a href="/categories/{{ .Page.Title | urlize }}/">{{ .Page.Title }}</a></h3>
+            <p class="tool-count">{{ .Count }} tools</p>
+        </div>
+        {{ end }}
+    </div>
+</section>
+{{ end }}

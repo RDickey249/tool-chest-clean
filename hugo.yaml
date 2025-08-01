@@ -1,0 +1,31 @@
+baseURL: "https://toolchest.pro"
+languageCode: "en-us"
+title: "ToolChest"
+
+params:
+  description: "Anti-overwhelm business tool curation platform to help you research and find the right tools without the research fatigue"
+  author: "ToolChest"
+
+taxonomies:
+  category: "categories"
+  tag: "tags"
+
+permalinks:
+  categories: "/categories/:slug/"
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+menu:
+  main:
+    - name: "Home"
+      url: "/"
+      weight: 1
+    - name: "Categories"
+      url: "/categories/"
+      weight: 2
+    - name: "About"
+      url: "/about/"
+      weight: 3
