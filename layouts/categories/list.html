@@ -5,15 +5,40 @@
         <a href="/">Home</a> > <span>Categories</span>
     </div>
     
-    <h1>{{ .Title }}</h1>
-    <p class="page-description">Browse tools by category to find exactly what you need.</p>
+    <div class="page-header">
+        <h1>{{ .Title }}</h1>
+        <p class="page-description">Browse tools by category to find exactly what you need.</p>
+        <div class="category-stats">
+            <span class="stat">{{ len .Site.Taxonomies.categories }} categories</span>
+            <span class="stat">{{ len .Site.RegularPages }} total tools</span>
+        </div>
+    </div>
     
-    <div class="grid grid-3">
-        {{ range .Site.Taxonomies.categories }}
-        <div class="card category-card">
-            <h2><a href="/categories/{{ .Page.Title | urlize }}/">{{ .Page.Title }}</a></h2>
-            <p class="category-description">{{ .Page.Title }} tools and platforms</p>
-            <p class="tool-count">{{ .Count }} tools</p>
+    <!-- Categories Grid with Performance Optimization -->
+    <div class="categories-container">
+        {{ $categories := .Site.Taxonomies.categories }}
+        {{ range $categoryName, $taxonomy := $categories }}
+        {{ $categoryPage := $taxonomy.Page }}
+        {{ $toolCount := $taxonomy.Count }}
+        {{ $affiliateCount := 0 }}
+        {{ range $taxonomy.Pages }}
+            {{ if .Params.affiliate }}
+                {{ $affiliateCount = add $affiliateCount 1 }}
+            {{ end }}
+        {{ end }}
+        
+        <div class="card category-card" data-category="{{ $categoryName | urlize }}">
+            <div class="category-header">
+                <h2><a href="/categories/{{ $categoryName | urlize }}/">{{ $categoryName }}</a></h2>
+                {{ if gt $affiliateCount 0 }}
+                <div class="affiliate-indicator">{{ $affiliateCount }} partners</div>
+                {{ end }}
+            </div>
+            <p class="category-description">{{ $categoryName }} tools and platforms</p>
+            <div class="category-meta">
+                <span class="tool-count">{{ $toolCount }} tools</span>
+                <a href="/categories/{{ $categoryName | urlize }}/" class="category-link">Explore →</a>
+            </div>
         </div>
         {{ end }}
     </div>
@@ -23,18 +48,58 @@
         <a href="/">Home</a> > <a href="/categories/">Categories</a> > <span>{{ .Title }}</span>
     </div>
     
-    <h1>{{ .Title }}</h1>
-    
-    <div class="grid grid-3">
-        {{ range .Pages }}
-        <div class="card tool-card">
-            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
-            <p class="tool-tagline">{{ .Params.tagline }}</p>
-            {{ if .Params.subcategory }}
-            <span class="subcategory-tag">{{ .Params.subcategory }}</span>
+    <div class="page-header">
+        <h1>{{ .Title }}</h1>
+        <div class="category-stats">
+            <span class="stat">{{ len .Pages }} tools</span>
+            {{ $affiliateTools := where .Pages ".Params.affiliate" "==" true }}
+            {{ if $affiliateTools }}
+            <span class="stat">{{ len $affiliateTools }} partners</span>
             {{ end }}
         </div>
-        {{ end }}
     </div>
+    
+    <!-- Affiliate Tools First -->
+    {{ if $affiliateTools }}
+    <section class="affiliate-tools-section">
+        <h2>⭐ Partner Tools in {{ .Title }}</h2>
+        <div class="grid grid-3">
+            {{ range $affiliateTools }}
+            <div class="card tool-card affiliate-card">
+                <div class="affiliate-badge">Partner</div>
+                <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+                <p class="tool-tagline">{{ .Params.tagline }}</p>
+                {{ if .Params.subcategory }}
+                <span class="subcategory-tag">{{ .Params.subcategory }}</span>
+                {{ end }}
+                {{ if .Params.affiliate_cta }}
+                <div class="tool-cta">
+                    <a href="{{ .Params.affiliate_url | default .Permalink }}" class="btn btn-affiliate btn-sm" target="_blank" rel="noopener">{{ .Params.affiliate_cta }}</a>
+                </div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
+    
+    <!-- Regular Tools -->
+    {{ $regularTools := where .Pages ".Params.affiliate" "!=" true }}
+    {{ if $regularTools }}
+    <section class="regular-tools-section">
+        <h2>All {{ .Title }} Tools</h2>
+        <div class="grid grid-3">
+            {{ range $regularTools }}
+            <div class="card tool-card">
+                <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+                <p class="tool-tagline">{{ .Params.tagline }}</p>
+                {{ if .Params.subcategory }}
+                <span class="subcategory-tag">{{ .Params.subcategory }}</span>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+    </section>
+    {{ end }}
 {{ end }}
 {{ end }}

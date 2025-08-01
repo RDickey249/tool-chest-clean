@@ -9,10 +9,44 @@
     </div>
 </div>
 
-<section class="featured-tools">
-    <h2>Featured Tools</h2>
+{{ $affiliateTools := where .Site.RegularPages ".Params.affiliate" "==" true }}
+{{ if $affiliateTools }}
+<section class="featured-tools affiliate-tools">
+    <div class="section-header">
+        <h2>⭐ Featured Affiliate Partners</h2>
+        <p class="section-description">Premium tools we recommend and partner with</p>
+    </div>
     <div class="grid grid-4">
-        {{ range first 12 .Site.RegularPages }}
+        {{ range first 8 $affiliateTools }}
+        <div class="card tool-card affiliate-card">
+            <div class="affiliate-badge">Partner</div>
+            <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+            <p class="tool-tagline">{{ .Params.tagline }}</p>
+            <div class="tool-meta">
+                <span class="category-tag">{{ .Params.category }}</span>
+                {{ if .Params.subcategory }}
+                <span class="subcategory-tag">{{ .Params.subcategory }}</span>
+                {{ end }}
+            </div>
+            {{ if .Params.affiliate_cta }}
+            <div class="tool-cta">
+                <a href="{{ .Params.affiliate_url | default .Permalink }}" class="btn btn-affiliate" target="_blank" rel="noopener">{{ .Params.affiliate_cta }}</a>
+            </div>
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
+</section>
+{{ end }}
+
+{{ $regularTools := where .Site.RegularPages ".Params.affiliate" "!=" true }}
+<section class="featured-tools regular-tools">
+    <div class="section-header">
+        <h2>Popular Tools</h2>
+        <p class="section-description">Highly recommended tools from our community</p>
+    </div>
+    <div class="grid grid-4">
+        {{ range first 8 $regularTools }}
         <div class="card tool-card">
             <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
             <p class="tool-tagline">{{ .Params.tagline }}</p>
@@ -33,11 +67,15 @@
         <a href="/categories/" class="view-all-link">View All Categories →</a>
     </div>
     <div class="grid grid-3">
-        {{ range first 6 .Site.Taxonomies.categories }}
+        {{ $categoryCount := 0 }}
+        {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
+        {{ if lt $categoryCount 6 }}
         <div class="card category-card">
-            <h3><a href="/categories/{{ .Page.Title | urlize }}/">{{ .Page.Title }}</a></h3>
-            <p class="tool-count">{{ .Count }} tools</p>
+            <h3><a href="/categories/{{ $categoryName | urlize }}/">{{ $categoryName }}</a></h3>
+            <p class="tool-count">{{ $taxonomy.Count }} tools</p>
         </div>
+        {{ $categoryCount = add $categoryCount 1 }}
+        {{ end }}
         {{ end }}
     </div>
 </section>

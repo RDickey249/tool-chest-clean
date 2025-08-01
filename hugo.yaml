@@ -2,9 +2,27 @@ baseURL: "https://toolchest.pro"
 languageCode: "en-us"
 title: "ToolChest"
 
+# Performance Optimizations
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableRobotsTXT: true
+enableGitInfo: false
+enableEmoji: false
+
+# Cache and minification
+minify:
+  disableCSS: false
+  disableHTML: false
+  disableJS: false
+  disableJSON: false
+  disableSVG: false
+  disableXML: false
+
 params:
   description: "Anti-overwhelm business tool curation platform to help you research and find the right tools without the research fatigue"
   author: "ToolChest"
+  version: "2.0"
 
 taxonomies:
   category: "categories"
@@ -17,6 +35,32 @@ markup:
   goldmark:
     renderer:
       unsafe: true
+    parser:
+      attribute:
+        block: true
+        title: true
+  highlight:
+    style: github
+    lineNos: false
+    codeFences: true
+
+# Caching for performance
+caches:
+  assets:
+    dir: ':cacheDir/_gen'
+    maxAge: "1h"
+  getcsv:
+    dir: ':cacheDir/:project'
+    maxAge: "1h"
+  getjson:
+    dir: ':cacheDir/:project'
+    maxAge: "1h"
+  images:
+    dir: ':cacheDir/_images'
+    maxAge: "1h"
+  modules:
+    dir: ':cacheDir/modules'
+    maxAge: "1h"
 
 menu:
   main:
